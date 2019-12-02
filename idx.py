@@ -22,7 +22,7 @@ DRIVER = 'chromedriver'
 
 chrome_options = webdriver.ChromeOptions()
 if os.name == "nt":
-    # If current OS is Windows
+  # If current OS is Windows
     chrome_options.add_argument("--start-maximized")
 else:
     # Other OS (Mac / Linux)
@@ -31,35 +31,40 @@ else:
 
 #------------------------------------------------------------------
 driver = webdriver.Chrome(DRIVER, chrome_options = chrome_options)
-driver.get('https://www.idx.co.id/berita/pengumuman/')
+driver.get('https://www.idx.co.id/berita/pengumuman/')		
 
 all_html = driver.page_source
 soup = BeautifulSoup(all_html,"html.parser")
 all_folder_name = soup.findAll("p", attrs={"class":"text-bigger text-bold block-clear ng-binding"})
 
 
-for x in range(15000):
-	for x in all_folder_name:
-		eachName = x.text.replace("/"," ")
-		print(eachName)
-		targetPath = os.path.join(os.getcwd(), eachName);
-		while not os.path.exists(targetPath):
-			os.mkdir(targetPath)
-		for link in soup.findAll('a', href= True):			
-				if(link['href'].split('.')[-1] == 'pdf'):
-					nama_href = link['href']
-					# print(nama_href)
-					url = "https://www.idx.co.id"+nama_href
-					print(url)
-					myfile = requests.get(url)
-					targetPath_PDF = os.path.join(targetPath,"pdf") ####------------->ini penting
-					while not os.path.exists(targetPath_PDF):		  ####------------->ini penting
-						os.mkdir(targetPath_PDF)					  ####------------->ini penting
-					targetFile_PDF = os.path.join (targetPath_PDF, nama_href.split('/')[-1])
-					code = open(targetFile_PDF,'wb').write(myfile.content)
-			
-		
-		
+for x in range(13000):
+
+	for link in soup.findAll('div', attrs={"class":"container-space container-space--big ng-scope"}):
+		# print(link.get_text())
+		for link_a in link.findAll(attrs={"class":"text-bigger text-bold block-clear ng-binding"}):
+			print(link_a.get_text())
+			judul = link_a.get_text()
+			targetFolder = os.path.join(os.getcwd(), judul.replace("/",""))
+			while not os.path.exists(targetFolder):
+				os.mkdir(targetFolder)
+			link_judul = link_a.parent['href']
+			print(link_judul)
+			url = "https://www.idx.co.id"+link_judul
+			myfile = requests.get(url)
+			targetPDF_Judul = os.path.join(targetFolder, judul.replace("/","")+".pdf")
+			code = open(targetPDF_Judul,'wb').write(myfile.content)
+
+		for link_b in link.findAll('a', href = True, attrs={"class":"red ng-binding"}):
+			print(link_b.get_text())
+			nama_attachment = link_b.get_text() 
+			link_attachment = link_b['href']
+			print(link_attachment)
+			url = "https://www.idx.co.id"+link_attachment
+			myfile = requests.get(url)
+			targetPDF_Attachment = os.path.join(targetFolder, nama_attachment.replace("/",""))
+			code = open(targetPDF_Attachment, 'wb').write(myfile.content)
+		print('-----------------------')
 
 
 	driver.find_element_by_css_selector("a[ng-click='setCurrent(pagination.current + 1)']").click()
