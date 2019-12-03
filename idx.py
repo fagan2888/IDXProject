@@ -70,8 +70,9 @@ for x in range(25000):
 			while not os.path.exists(targetFolder):
 				os.mkdir(targetFolder)
 			link_judul = link_a.parent['href']
-			print(link_judul)
+			#print(link_judul)
 			url = "https://www.idx.co.id"+link_judul
+			print(url)
 			myfile = requests.get(url)
 			
 			if(len(cwd+judul+judul) > 250):
@@ -92,8 +93,9 @@ for x in range(25000):
 			nama_attachment = link_b.get_text() 
 			nama_attachment_windows = nama_attachment.replace("/","").replace(chr(92),"").replace(chr(58),"").replace("*","").replace("?","").replace('"',"").replace("<","").replace(">","").replace("|","")
 			link_attachment = link_b['href']
-			print(link_attachment)
+			#print(link_attachment)
 			url = "https://www.idx.co.id"+link_attachment
+			print(url)
 			myfile = requests.get(url)
 			if(len(cwd+judul+nama_attachment_windows) > 250):
 				targetPDF_Attachment = os.path.join(targetFolder, nama_attachment_windows[0:200])
